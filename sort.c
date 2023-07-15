@@ -4,17 +4,97 @@
 
 int extraMemoryAllocated;
 
+void heap(int arr[], int n ,int i)
+{
+	int large = i;
+	int left = 2 * i + 1;
+	int right = 2 * i + 2;
+
+	if (left < n && arr[left] > arr[large])
+	large = left;
+
+	if (right < n && arr[right] > arr[large])
+	large = right;
+
+	if (large != i){
+		int tmp = arr[i];
+		arr[i] = arr[large];
+		arr[large] = tmp;
+		heap(arr, n, large);
+	}
+}
 // implements heap sort
 // extraMemoryAllocated counts bytes of memory allocated
 void heapSort(int arr[], int n)
-{
+{ extraMemoryAllocated = 0;
+
+for (int i = n / 2 - 1; i >= 0; i--)
+heap(arr, n, i );
+
+for (int i = n-1; i > 0; i--){
+	int tmp = arr[0];
+	arr[0] = arr[i];
+	arr[i] = tmp;
+
+	heap(arr, i, 0);
+}
 }
 
 
 // implement merge sort
+void merge( int pData[], int l int m, int r){
+	int i, j , k;
+	int num1 = m-l+1;
+	int num2 = r-m;
+
+	int* L = (int*)malloc(num1 * sizeof(int));
+	int* R = (int*)malloc(num2 * sizeof(int));
+
+	for (i = 0; i < num1; i++)
+	L[i] = pData[l + i];
+	for (j = 0; j < num2; j++)
+	R[i] = pData[m+1+j];
+	
+	i = 0;
+	j = 0;
+	k = 0;
+	while( i < num1 &&  j < num2){
+		if (L[i] <= R[j]){
+			pData [k] = L[i];
+			i++;
+		}
+		else{
+			pData[k] = R[j];
+			j++;
+		}
+		k++;
+	}
+	while ( i < num1){
+		pData[k] = L[i];
+		i++;
+		k++;
+
+	}
+	while ( j < num2){
+		pData[k] = R[j];
+		j++;
+		k++;
+	}
+	extraMemoryAllocated += num1 * sizeof(int) + num2 * sizeof(int);
+
+	free(L);
+	free(R);
+
+}
 // extraMemoryAllocated counts bytes of extra memory allocated
-void mergeSort(int pData[], int l, int r)
+void mergeSort(int pData[], int l, int m, int r)
 {
+	if (l < r){
+		int m = l + (r - l) / 2;
+		mergeSort(pData, l, m);
+		mergeSort(pData, m + 1, r);
+		merge(pData, l, m, r);
+	}
 }
 
 // parses input file to an integer array
@@ -72,7 +152,7 @@ int main(void)
 	int i;
     double cpu_time_used;
 	char* fileNames[] = { "input1.txt", "input2.txt", "input3.txt", "input4.txt" };
-	
+	int memcpy();
 	for (i=0;i<4;++i)
 	{
 		int *pDataSrc, *pDataCopy;
